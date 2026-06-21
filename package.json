@@ -1,0 +1,7 @@
+{
+  "name": "PR0xe",
+  "version": "1.0.0",
+  "dependencies": {
+    "http-proxy-middleware": "^3.0.3"
+  }
+}
