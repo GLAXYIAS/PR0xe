@@ -1,31 +1,38 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const proxy = createProxyMiddleware({
-  target: '', // will be overridden
-  changeOrigin: true,
-  pathRewrite: (path, req) => {
-    // Extract target from query or path
-    return path;
-  },
-  onProxyReq: (proxyReq, req) => {
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const targetUrl = url.searchParams.get('url') || req.url.replace('/api/proxy/', '');
-    if (targetUrl) {
-      proxyReq.setHeader('Host', new URL(targetUrl.startsWith('http') ? targetUrl : 'https://' + targetUrl).host);
-    }
-  }
-});
-
 export default function handler(req, res) {
-  const url = new URL(req.url, `http://${req.headers.host}`);
-  let target = url.searchParams.get('url');
+  const urlObj = new URL(req.url, `http://${req.headers.host}`);
+  let target = urlObj.searchParams.get('url');
+
   if (!target) {
-    target = req.url.replace('/api/proxy', '').replace(/^//, '');
+    // Support /api/proxy/https://example.com format
+    target = req.url.replace(/^/api/proxy/?/, '');
   }
-  if (!target.startsWith('http')) {
+
+  if (!target) {
+    res.status(400).json({ error: 'Missing target url' });
+    return;
+  }
+
+  if (!target.startsWith('http://') && !target.startsWith('https://')) {
     target = 'https://' + target;
   }
 
-  // Dynamic target
-  proxy.proxy(req, res, { target });
+  const proxy = createProxyMiddleware({
+    target: target,
+    changeOrigin: true,
+    secure: true,
+    ws: true,
+    onProxyReq: (proxyReq, req) => {
+      // Remove proxy-specific headers
+      proxyReq.removeHeader('x-forwarded-host');
+      proxyReq.removeHeader('x-forwarded-proto');
+    }
+  });
+
+  proxy(req, res, (err) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 }
