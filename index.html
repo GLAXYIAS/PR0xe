@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PR0xe - DayDreamX Style</title>
+  <style>
+    body { font-family: system-ui; background: #0f0f12; color: #fff; text-align: center; padding: 50px 20px; }
+    h1 { font-size: 3rem; margin-bottom: 10px; background: linear-gradient(90deg, #a855f7, #3b82f6); -webkit-background-clip: text; color: transparent; }
+    input { width: 80%; max-width: 700px; padding: 18px; font-size: 1.2rem; border-radius: 9999px; border: none; outline: none; margin: 30px 0; }
+    .icons { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 20px; max-width: 900px; margin: 40px auto; }
+    .icon { background: #1f1f24; padding: 20px; border-radius: 16px; transition: 0.2s; cursor: pointer; }
+    .icon:hover { transform: scale(1.1); background: #2a2a32; }
+    .icon img { width: 48px; height: 48px; border-radius: 12px; }
+  </style>
+</head>
+<body>
+  <h1>PR0xe</h1>
+  <p style="color:#888;">Search or type a URL</p>
+  
+  <input type="text" id="search" placeholder="Search for anything... or paste a URL" autofocus>
+  
+  <div class="icons">
+    <div class="icon" onclick="go('https://google.com')"><img src="https://www.google.com/favicon.ico" alt="Google"><p>Google</p></div>
+    <div class="icon" onclick="go('https://youtube.com')"><img src="https://www.youtube.com/favicon.ico" alt="YouTube"><p>YouTube</p></div>
+    <div class="icon" onclick="go('https://reddit.com')"><img src="https://www.reddit.com/favicon.ico" alt="Reddit"><p>Reddit</p></div>
+    <div class="icon" onclick="go('https://x.com')"><img src="https://x.com/favicon.ico" alt="X"><p>X</p></div>
+    <div class="icon" onclick="go('https://wikipedia.org')"><img src="https://wikipedia.org/favicon.ico" alt="Wiki"><p>Wikipedia</p></div>
+    <div class="icon" onclick="go('https://netflix.com')"><img src="https://netflix.com/favicon.ico" alt="Netflix"><p>Netflix</p></div>
+    <!-- Add more icons as needed -->
+  </div>
+
+  <script>
+    const input = document.getElementById('search');
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        let val = input.value.trim();
+        if (!val) return;
+        if (!val.startsWith('http')) val = 'https://' + val;
+        window.location.href = '/' + val;
+      }
+    });
+
+    function go(url) {
+      window.location.href = '/' + url;
+    }
+  </script>
+</body>
+</html>
